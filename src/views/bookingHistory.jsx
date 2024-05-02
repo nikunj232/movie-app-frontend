@@ -4,15 +4,17 @@ import { axiosApi } from '../helper/axiosApi'
 import Modal from 'react-modal'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { toast } from 'react-toastify'
+import CustomLoader from '../components/CustomLoader'
 
 const MySwal = withReactContent(Swal)
-
 
 const BookingHistory = () => {
     const [searchText, setSearchText] = useState('')
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(10)
     const [isLoading, setIsLoading] = useState(false)
+    const [isDeleteBookingLoading, setIsDeleteBookingLoading] = useState(false)
     const [myBookingListData, setMyBookingListData] = useState()
     const [myBookingListError, setMyBookingListError] = useState()
     const {x,y} = usePageScroll()
@@ -20,26 +22,26 @@ const BookingHistory = () => {
     const fetchBookingHistory = async () => {
         setIsLoading(true)
         try {
-          const bookingData = await axiosApi.get('/bookings', {
-            params:{
-              search:searchText,
-              page,
-              limit
-            }
-          })
-    
-          setTimeout(() => {
-            if (page==1) {
-                setMyBookingListData(bookingData.data.data)
-            }else{
-              let updatedBookingListData = {...myBookingListData, results: [...myBookingListData.results, ...bookingData?.data?.data?.results]}
-              setMyBookingListData(updatedBookingListData)
-            }
-            setIsLoading(false)
-          }, 500);
+            const bookingData = await axiosApi.get('/bookings', {
+                params:{
+                search:searchText,
+                page,
+                limit
+                }
+            })
+        
+            setTimeout(() => {
+                if (page==1) {
+                    setMyBookingListData(bookingData.data.data)
+                }else{
+                let updatedBookingListData = {...myBookingListData, results: [...myBookingListData.results, ...bookingData?.data?.data?.results]}
+                setMyBookingListData(updatedBookingListData)
+                }
+                setIsLoading(false)
+            }, 500);
         } catch (error) {
-          setIsLoading(false)
-          setMyBookingListError(error)
+            setIsLoading(false)
+            setMyBookingListError(error)
         }
     }
     
@@ -48,37 +50,54 @@ const BookingHistory = () => {
             fetchBookingHistory()
         }
     }, [y])
+
+    useEffect(() => {
+        fetchBookingHistory()
+    }, [page])
+      
+    useEffect(() => {
+        setPage(1)
+    }, [searchText])
+      
     
     useEffect(() => {
         fetchBookingHistory()
     }, [])
     const [modalIsOpen, setIsOpen] = useState(false);
 
-    function openModal() {
-        // setIsOpen(true);
-        
-MySwal.fire({
-    title: <p>Hello World</p>,
-    didOpen: () => {
-      // `MySwal` is a subclass of `Swal` with all the same instance & static methods
-      MySwal.showLoading()
-    },
-  }).then(() => {
-    return MySwal.fire(<p>Shorthand works too</p>)
-  })
+    const deleteTicket = async (bookingId) => {
+        setIsDeleteBookingLoading(true)
+        try{
+            const deleteBookingData = await axiosApi.delete(`/bookings/${bookingId}`)
+            setIsDeleteBookingLoading(false)
+            setPage(1)
+            setSearchText("")
+            fetchBookingHistory()
+            toast.success(res.data.message)
+        }catch(error){
+            setIsDeleteBookingLoading(false)
+            toast.error(error.response?.data.message)
+        }
+    }
+    function openModal(bookingId) {
+        MySwal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No",
+            reverseButtons: true
+        }).then(data => {
+            console.log(data)
+            if(data.isConfirmed){
+                deleteTicket(bookingId)
+            }
+        })
     }
 
-    function afterOpenModal() {
-        // references are now sync'd and can be accessed.
-        subtitle.style.color = '#f00';
-    }
-
-    function closeModal() {
-        setIsOpen(false);
-    }
-
-    
     return (<>
+        {isDeleteBookingLoading && <CustomLoader/>}
         <div className='px-20'>
             <h5 className='mb-6 text-3xl font-semibold'>Booking history <span className='text-lg'>(Total {myBookingListData?.totalResults ?? 0} Results)</span></h5>
             <div className='flex gap-4'>
@@ -115,19 +134,21 @@ MySwal.fire({
                                         </div>
                                         {/* <hr /> */}
                                         <div className='flex justify-end'>
-                                            <button className='lm-auto bg-red text-white px-4 py-2 font-semibold rounded' onClick={openModal}>Cancel ticket</button>
+                                            <button className='lm-auto bg-red text-white px-4 py-2 font-semibold rounded' onClick={() => openModal(booking._id)}>Cancel ticket</button>
                                         </div>
                                     </div>
                                 </div>
                         </>)
                     })
-                    :<></>
+                    :<div className='flex items-center justify-center mx-auto'>
+                        <p className='py-20 font-semibold text-center'>No data found!</p>
+                    </div>
                 }
 
             </div>
         </div>
 
-        <Modal
+        {/* <Modal
             isOpen={modalIsOpen}
             onAfterOpen={afterOpenModal}
             onRequestClose={closeModal}
@@ -135,7 +156,7 @@ MySwal.fire({
             contentLabel="Example Modal"
         >
             <h4>Are yoou sure you want to cancel this ticket? </h4>
-        </Modal>
+        </Modal> */}
     </>)
 }
 

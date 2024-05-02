@@ -60,7 +60,7 @@ const Home = () => {
   }
   useEffect(() => {
     fetchMovie()
-  }, [page, searchText])
+  }, [page])
   
   useEffect(() => {
     setPage(1)
