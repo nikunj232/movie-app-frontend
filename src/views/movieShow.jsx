@@ -101,9 +101,10 @@ const MovieShow = () => {
     }
     return (<>
         <div className='flex items-strech justify-between px-24 mb-8'>
-            <div className='rounded bg-white px-4 py-2'>
+            <div className='rounded bg-white px-4 py-2 mr-4'>
                 <div>Movie : <b>{showData?.movie?.title ?? "______"}</b></div>
-                <div>time  : <b>{showData?.time ?? "HH:MM"}</b></div>
+                <div>Show time  : <b>{showData?.time ?? "HH:MM"}</b></div>
+                <div>Total Available Seats  : <b>{showData?.available_seats ?? "0"}</b></div>
             </div>
             <div className='ml-auto rounded bg-white px-4 py-2 max-w-max'>
                 <p className='text-sm mb-4'>How many seat you want to book!</p>
