@@ -6,6 +6,8 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { toast } from 'react-toastify'
 import CustomLoader from '../components/CustomLoader'
+import { ticketSvg } from '../assets/images'
+import moment from 'moment'
 
 const MySwal = withReactContent(Swal)
 
@@ -100,13 +102,13 @@ const BookingHistory = () => {
         {isDeleteBookingLoading && <CustomLoader/>}
         <div className='px-20'>
             <h5 className='mb-6 text-3xl font-semibold'>Booking history <span className='text-lg'>(Total {myBookingListData?.totalResults ?? 0} Results)</span></h5>
-            <div className='flex gap-4'>
+            <div className='grid grid-cols-3 gap-4'>
                 {
                     myBookingListData?.results?.length
                     ?myBookingListData?.results.map(booking => {
                         console.log(booking, "booking dta");
                         return(<>
-                                <div className='max-w-max'>
+                                <div className='max-w-max px-4 py-2 relative'>
                                     <div className="bg-white max-w-max px-6 py-3 rounded-lg">
                                         <div className='text-based mb-2 min-w-2.5'>
                                             <span>Booked By : </span>
@@ -128,9 +130,9 @@ const BookingHistory = () => {
                                             <span>Show time : </span>
                                             <span className='font-semibold'> {booking.show.time}</span>
                                         </div>
-                                        <div className='text-based mb-2 min-w-2.5'>
+                                        <div className='text-based mb-2 min-w-2.5 mb-6'>
                                             <span>Booked on : </span>
-                                            <span className='font-semibold'> {booking?.createdAt}</span>
+                                            <span className='font-semibold'> {moment(booking?.createdAt).format("YYYY/MM/DD  HH:mm")}</span>
                                         </div>
                                         {/* <hr /> */}
                                         <div className='flex justify-end'>

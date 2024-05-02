@@ -9,6 +9,7 @@ export {default as cancelSvg} from "./svg/cancel-icon.svg"
 export {default as deleteSvg} from "./svg/delete.svg"
 export {default as mainLogoSvg} from "./svg/main-logo.svg"
 export {default as editSvg} from "./svg/edit.svg"
+export {default as ticketSvg} from "./svg/ticket.svg"
 
 //gif
 export {default as inlineLoaderGif} from "./gif/inline-loader.gif"

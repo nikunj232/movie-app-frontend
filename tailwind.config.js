@@ -39,6 +39,9 @@ module.exports = {
         'theme': '0px 0px 15px 1px rgba(0,0,0,0.1)',
       },
     },
+    backgroundImage: {
+      // 'ticket-svg': "url('./src/assets/images/svg/ticket.svg')",
+    }
   },
   plugins: [],
 }

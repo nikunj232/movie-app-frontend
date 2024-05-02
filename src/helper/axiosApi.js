@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { isUserLoggedIn, getAccessToken, userLogout } from './authFunctions'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const baseURL = process.env.REACT_APP_API_ENDPOINT
 
@@ -36,6 +38,7 @@ axiosApi.interceptors.response.use((response) => {
   switch (resposneStatus) {
     case 401:
       userLogout()
+      toast.error("Unauthorized!")
       window.location.href = '/login'
       break
 

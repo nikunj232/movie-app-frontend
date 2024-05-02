@@ -23,10 +23,6 @@ const Home = () => {
   const navigate = useNavigate()
   const { x, y} = usePageScroll()
 
-  const {cartMovieItemIds} = useSelector((store) => ({
-    cartMovieItemIds: store.authSlice.profileData.data?.cartItem
-  }))
-
   const fetchMovie = async () => {
     setIsLoading(true)
     try {
@@ -40,7 +36,7 @@ const Home = () => {
 
       setTimeout(() => {
         if (page==1) {
-          setmoviesListData(moviesData.data.data)
+          setmoviesListData(moviesData?.data?.data)
         }else{
           let updatedMovieListData = {...moviesListData, results: [...moviesListData.results, ...moviesData?.data?.data?.results]}
           setmoviesListData(updatedMovieListData)
